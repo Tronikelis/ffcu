@@ -43,7 +43,7 @@ func CreateConfig() (Config, error) {
 	return config, nil
 }
 
-func (config Config) SaveConfig() error {
+func (config *Config) SaveConfig() error {
 	bytes, err := json.Marshal(config)
 	if err != nil {
 		return err
@@ -54,4 +54,8 @@ func (config Config) SaveConfig() error {
 	}
 
 	return nil
+}
+
+func (config *Config) IsFilledOut() bool {
+	return config.ProfileDir != "" && config.UserJsUrl != "" && config.ZippedChromeUrl != ""
 }

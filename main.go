@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"os"
 	"path"
+	"strings"
 	"sync"
 	"time"
 
@@ -18,7 +19,6 @@ import (
 )
 
 func main() {
-
 	config, err := configuration.ReadConfig()
 	if err != nil {
 		log.Println("can't read config, creating a new one")
@@ -41,7 +41,7 @@ func main() {
 				Usage: "ffcu config set-dir xxx",
 				Subcommands: []*cli.Command{
 					{
-						Name:        "set-dir",
+						Name:        "set-profile-dir",
 						Description: "The dir where the user.js and chrome dir is",
 						Action: func(ctx *cli.Context) error {
 							dir := ctx.Args().First()
@@ -54,7 +54,6 @@ func main() {
 							}
 
 							config.ProfileDir = dir
-							config.SaveConfig()
 
 							return nil
 						},
@@ -103,6 +102,10 @@ func main() {
 				Name:  "update",
 				Usage: "Kills firefox and updates it with the latest downloaded files",
 				Action: func(ctx *cli.Context) error {
+					if !config.IsFilledOut() {
+						return errors.New("config is not filled out")
+					}
+
 					log.Println("killing firefox")
 
 					if err := utils.KillProcess("firefox"); err != nil {
@@ -110,8 +113,8 @@ func main() {
 						log.Println("proceeding")
 					}
 
-					log.Println("waiting 5 seconds")
-					time.Sleep(time.Second * 5)
+					log.Println("waiting for 1 second")
+					time.Sleep(time.Second)
 
 					wg := sync.WaitGroup{}
 					wg.Add(2)
@@ -154,13 +157,43 @@ func main() {
 							return
 						}
 
+						chromeDir := path.Join(config.ProfileDir, "chrome")
+
+						log.Println("removing", chromeDir)
+
+						if err := os.RemoveAll(chromeDir); err != nil {
+							log.Println(err)
+							return
+						}
+
+						log.Println("creating", chromeDir)
+
+						if err := os.Mkdir(chromeDir, os.ModePerm); err != nil {
+							log.Println(err)
+							return
+						}
+
 						for _, file := range z.File {
 							fileInfo := file.FileInfo()
 
-							if fileInfo.IsDir() {
-								os.MkdirAll(file.Name, os.ModePerm)
+							split := strings.Split(file.Name, "/chrome/")
+							if len(split) == 1 {
 								continue
 							}
+
+							underChrome := split[1]
+							joinedPath := path.Join(chromeDir, underChrome)
+
+							if fileInfo.IsDir() {
+								if err := os.MkdirAll(joinedPath, os.ModePerm); err != nil {
+									log.Println(err)
+									return
+								}
+
+								continue
+							}
+
+							// joinedPath is a file from here on out
 
 							opened, err := file.Open()
 							if err != nil {
@@ -170,7 +203,7 @@ func main() {
 
 							defer opened.Close()
 
-							local, err := os.Create(file.Name)
+							local, err := os.Create(joinedPath)
 							if err != nil {
 								log.Println(err)
 								return
@@ -181,10 +214,11 @@ func main() {
 								log.Println(err)
 							}
 						}
-
 					}()
 
 					wg.Wait()
+
+					log.Println("Done, open firefox to enjoy your new theme 🥳")
 
 					return nil
 				},
