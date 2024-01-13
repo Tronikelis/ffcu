@@ -14,3 +14,7 @@ Update your firefox with remote themes and user.js config with one command
 ```
 go install github.com/Tronikelis/ffcu
 ```
+
+## Config
+
+The ffcu config is stored in `$HOME/.ffcu/config.json`
