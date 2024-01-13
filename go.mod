@@ -1,4 +1,4 @@
-module ffcu
+module github.com/Tronikelis/ffcu
 
 go 1.21.6
 

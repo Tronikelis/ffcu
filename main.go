@@ -5,8 +5,6 @@ import (
 	"bufio"
 	"bytes"
 	"errors"
-	"ffcu/configuration"
-	"ffcu/utils"
 	"log"
 	"net/url"
 	"os"
@@ -14,6 +12,9 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/Tronikelis/ffcu/configuration"
+	"github.com/Tronikelis/ffcu/utils"
 
 	"github.com/urfave/cli/v2"
 )
