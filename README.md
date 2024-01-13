@@ -10,3 +10,7 @@ Update your firefox with remote themes and user.js config with one command
 4. `ffcu update`
 
 ## Installing
+
+```
+go install github.com/Tronikelis/ffcu
+```
