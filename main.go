@@ -19,17 +19,28 @@ import (
 )
 
 func main() {
-	config, err := configuration.ReadConfig()
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	if err := os.MkdirAll(path.Join(homeDir, ".ffcu"), os.ModePerm); err != nil {
+		log.Fatalln(err)
+	}
+
+	configDir := path.Join(homeDir, ".ffcu/config.json")
+
+	config, err := configuration.ReadConfig(configDir)
 	if err != nil {
 		log.Println("can't read config, creating a new one")
 
-		config, err = configuration.CreateConfig()
+		config, err = configuration.CreateConfig(configDir)
 		if err != nil {
 			log.Fatalln(err)
 		}
 	}
 
-	defer config.SaveConfig()
+	defer config.SaveConfig(configDir)
 
 	app := &cli.App{
 		Name:  "ffcu",
@@ -37,8 +48,7 @@ func main() {
 
 		Commands: []*cli.Command{
 			{
-				Name:  "config",
-				Usage: "ffcu config set-dir xxx",
+				Name: "config",
 				Subcommands: []*cli.Command{
 					{
 						Name:        "set-profile-dir",
@@ -176,12 +186,12 @@ func main() {
 						for _, file := range z.File {
 							fileInfo := file.FileInfo()
 
-							split := strings.Split(file.Name, "/chrome/")
+							split := strings.Split(file.Name, "chrome/")
 							if len(split) == 1 {
 								continue
 							}
 
-							underChrome := split[1]
+							underChrome := split[len(split)-1]
 							joinedPath := path.Join(chromeDir, underChrome)
 
 							if fileInfo.IsDir() {

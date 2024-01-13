@@ -5,18 +5,16 @@ import (
 	"os"
 )
 
-const CONFIG_FILE_DIR = "./ffcu.json"
-
 type Config struct {
 	ProfileDir      string
 	UserJsUrl       string
 	ZippedChromeUrl string
 }
 
-func ReadConfig() (Config, error) {
+func ReadConfig(dir string) (Config, error) {
 	config := Config{}
 
-	bytes, err := os.ReadFile(CONFIG_FILE_DIR)
+	bytes, err := os.ReadFile(dir)
 	if err != nil {
 		return config, err
 	}
@@ -28,7 +26,7 @@ func ReadConfig() (Config, error) {
 	return config, nil
 }
 
-func CreateConfig() (Config, error) {
+func CreateConfig(dir string) (Config, error) {
 	config := Config{}
 
 	bytes, err := json.Marshal(config)
@@ -36,20 +34,20 @@ func CreateConfig() (Config, error) {
 		return config, err
 	}
 
-	if err := os.WriteFile(CONFIG_FILE_DIR, bytes, os.ModePerm); err != nil {
+	if err := os.WriteFile(dir, bytes, os.ModePerm); err != nil {
 		return config, err
 	}
 
 	return config, nil
 }
 
-func (config *Config) SaveConfig() error {
+func (config *Config) SaveConfig(dir string) error {
 	bytes, err := json.Marshal(config)
 	if err != nil {
 		return err
 	}
 
-	if err := os.WriteFile(CONFIG_FILE_DIR, bytes, os.ModePerm); err != nil {
+	if err := os.WriteFile(dir, bytes, os.ModePerm); err != nil {
 		return err
 	}
 
