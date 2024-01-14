@@ -1,6 +1,6 @@
 # ffcu
 
-Update your firefox with remote themes and user.js config with one command
+Update your firefox with remote themes and remote user.js config + custom local overrides with one command
 
 ```
 NAME:
