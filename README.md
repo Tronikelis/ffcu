@@ -37,3 +37,8 @@ go install github.com/Tronikelis/ffcu
 ## Config
 
 The ffcu config is stored in `$HOME/.ffcu/config.json`
+
+## Overriding user.js
+
+Create a file in the root of your firefox profile directory named `user.overrides.js`, once the new `user.js` is written,
+that file will be appended at the end of the new `user.js`
