@@ -11,7 +11,8 @@ import (
 
 func Command(fConfig *ffcu.Config) *cli.Command {
 	return &cli.Command{
-		Name: "config",
+		Name:  "config",
+		Usage: "Commands related to ffcu configuration",
 		Subcommands: []*cli.Command{
 			set_userjs_url.Command(fConfig),
 			set_profile_dir.Command(fConfig),

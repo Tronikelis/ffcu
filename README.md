@@ -2,6 +2,22 @@
 
 Update your firefox with remote themes and user.js config with one command
 
+```
+NAME:
+   ffcu - Helper CLI tool to auto update your firefox config
+
+USAGE:
+   ffcu [global options] command [command options]
+
+COMMANDS:
+   config   Commands related to ffcu configuration
+   update   Kills firefox and updates it with the latest downloaded files
+   help, h  Shows a list of commands or help for one command
+
+GLOBAL OPTIONS:
+   --help, -h  show help
+```
+
 ## Usage
 
 > [!WARNING]  
