@@ -17,7 +17,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func insertChrome(fConfig *ffcu.Config) {
+func insertChrome(fConfig *ffcu.Config, log *log.Logger) {
 	log.Println("downloading", fConfig.ZippedChromeUrl)
 
 	zipped, err := utils.DownloadBytes(fConfig.ZippedChromeUrl)
@@ -91,7 +91,7 @@ func insertChrome(fConfig *ffcu.Config) {
 	}
 }
 
-func insertUserJs(fConfig *ffcu.Config) {
+func insertUserJs(fConfig *ffcu.Config, log *log.Logger) {
 	log.Println("downloading", fConfig.UserJsUrl)
 
 	userJs, err := utils.DownloadBytes(fConfig.UserJsUrl)
@@ -130,7 +130,7 @@ func action(fConfig *ffcu.Config) func(ctx *cli.Context) error {
 			wg.Add(1)
 
 			go func() {
-				insertChrome(fConfig)
+				insertChrome(fConfig, log.New(os.Stdout, "[insertChrome] ", log.Flags()))
 				wg.Done()
 			}()
 		}
@@ -139,7 +139,7 @@ func action(fConfig *ffcu.Config) func(ctx *cli.Context) error {
 			wg.Add(1)
 
 			go func() {
-				insertUserJs(fConfig)
+				insertUserJs(fConfig, log.New(os.Stdout, "[insertUserJs] ", log.Flags()))
 				wg.Done()
 			}()
 		}

@@ -12,6 +12,8 @@ import (
 )
 
 func main() {
+	log.SetFlags(0)
+
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		log.Fatalln(err)
