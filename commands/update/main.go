@@ -125,17 +125,24 @@ func action(fConfig *ffcu.Config) func(ctx *cli.Context) error {
 		time.Sleep(time.Second)
 
 		wg := sync.WaitGroup{}
-		wg.Add(2)
 
-		go func() {
-			insertUserJs(fConfig)
-			wg.Done()
-		}()
+		if fConfig.ZippedChromeUrl != "" {
+			wg.Add(1)
 
-		go func() {
-			insertChrome(fConfig)
-			wg.Done()
-		}()
+			go func() {
+				insertChrome(fConfig)
+				wg.Done()
+			}()
+		}
+
+		if fConfig.UserJsUrl != "" {
+			wg.Add(1)
+
+			go func() {
+				insertUserJs(fConfig)
+				wg.Done()
+			}()
+		}
 
 		wg.Wait()
 

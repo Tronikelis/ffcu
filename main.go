@@ -33,12 +33,13 @@ func main() {
 		}
 	}
 
-	defer config.SaveConfig(configDir)
-
 	app := &cli.App{
 		Name:     "ffcu",
 		Usage:    "Helper CLI tool to auto update your firefox config",
 		Commands: commands.Commands(&config),
+		After: func(ctx *cli.Context) error {
+			return config.SaveConfig(configDir)
+		},
 	}
 
 	if err := app.Run(os.Args); err != nil {

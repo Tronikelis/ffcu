@@ -55,5 +55,10 @@ func (config *Config) SaveConfig(dir string) error {
 }
 
 func (config *Config) IsFilledOut() bool {
-	return config.ProfileDir != "" && config.UserJsUrl != "" && config.ZippedChromeUrl != ""
+	// profile dir is required
+	if config.ProfileDir == "" {
+		return false
+	}
+
+	return config.UserJsUrl != "" || config.ZippedChromeUrl != ""
 }

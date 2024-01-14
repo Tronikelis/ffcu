@@ -29,7 +29,7 @@ func action(fConfig *ffcu.Config) func(ctx *cli.Context) error {
 
 func Command(fConfig *ffcu.Config) *cli.Command {
 	return &cli.Command{
-		Name:   "set-chrome-zip",
+		Name:   "set-chrome-zip-url",
 		Usage:  "Download the zip which has the latest chrome dir from this url",
 		Action: action(fConfig),
 	}
