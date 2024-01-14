@@ -17,19 +17,17 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func insertChrome(fConfig *ffcu.Config, log *log.Logger) {
+func insertChrome(fConfig *ffcu.Config, log *log.Logger) error {
 	log.Println("downloading", fConfig.ZippedChromeUrl)
 
 	zipped, err := utils.DownloadBytes(fConfig.ZippedChromeUrl)
 	if err != nil {
-		log.Println(err)
-		return
+		return err
 	}
 
 	z, err := zip.NewReader(bytes.NewReader(zipped), int64(len(zipped)))
 	if err != nil {
-		log.Println(err)
-		return
+		return err
 	}
 
 	chromeDir := path.Join(fConfig.ProfileDir, "chrome")
@@ -37,15 +35,13 @@ func insertChrome(fConfig *ffcu.Config, log *log.Logger) {
 	log.Println("removing", chromeDir)
 
 	if err := os.RemoveAll(chromeDir); err != nil {
-		log.Println(err)
-		return
+		return err
 	}
 
 	log.Println("creating", chromeDir)
 
 	if err := os.Mkdir(chromeDir, os.ModePerm); err != nil {
-		log.Println(err)
-		return
+		return err
 	}
 
 	for _, file := range z.File {
@@ -61,8 +57,7 @@ func insertChrome(fConfig *ffcu.Config, log *log.Logger) {
 
 		if fileInfo.IsDir() {
 			if err := os.MkdirAll(joinedPath, os.ModePerm); err != nil {
-				log.Println(err)
-				return
+				return err
 			}
 
 			continue
@@ -72,16 +67,14 @@ func insertChrome(fConfig *ffcu.Config, log *log.Logger) {
 
 		opened, err := file.Open()
 		if err != nil {
-			log.Println(err)
-			return
+			return err
 		}
 
 		defer opened.Close()
 
 		local, err := os.Create(joinedPath)
 		if err != nil {
-			log.Println(err)
-			return
+			return err
 		}
 
 		writer := bufio.NewWriter(local)
@@ -89,23 +82,62 @@ func insertChrome(fConfig *ffcu.Config, log *log.Logger) {
 			log.Println(err)
 		}
 	}
+
+	return nil
 }
 
-func insertUserJs(fConfig *ffcu.Config, log *log.Logger) {
+func insertUserJs(fConfig *ffcu.Config, log *log.Logger) error {
+	USER_OVERRIDES_JS_NAME := "user.overrides.js"
+	USER_JS_NAME := "user.js"
+
 	log.Println("downloading", fConfig.UserJsUrl)
 
 	userJs, err := utils.DownloadBytes(fConfig.UserJsUrl)
 	if err != nil {
-		log.Println(err)
-		return
+		return err
 	}
 
-	log.Println("writing user.js to", fConfig.ProfileDir)
+	userJsDir := path.Join(fConfig.ProfileDir, USER_JS_NAME)
+	userJsOverrideDir := path.Join(fConfig.ProfileDir, USER_OVERRIDES_JS_NAME)
 
-	if err := os.
-		WriteFile(path.Join(fConfig.ProfileDir, "user.js"), userJs, os.ModePerm); err != nil {
-		log.Println(err)
+	log.Println("removing", USER_JS_NAME)
+	if err := os.Remove(userJsDir); err != nil {
+		return err
 	}
+
+	log.Println("creating", USER_JS_NAME)
+	userJsOpened, err := os.Create(userJsDir)
+	if err != nil {
+		return err
+	}
+
+	defer userJsOpened.Close()
+
+	log.Println("writing", USER_JS_NAME, "to", fConfig.ProfileDir)
+	if _, err := userJsOpened.Write(append(userJs, []byte("\n")...)); err != nil {
+		return err
+	}
+
+	_, err = os.Stat(userJsOverrideDir)
+	if os.IsNotExist(err) {
+		log.Println(USER_OVERRIDES_JS_NAME, "not found, exiting")
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+
+	overrideBytes, err := os.ReadFile(userJsOverrideDir)
+	if err != nil {
+		return err
+	}
+
+	log.Println("appending", USER_OVERRIDES_JS_NAME, "to", USER_JS_NAME)
+	if _, err := userJsOpened.Write(overrideBytes); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func action(fConfig *ffcu.Config) func(ctx *cli.Context) error {
@@ -130,8 +162,13 @@ func action(fConfig *ffcu.Config) func(ctx *cli.Context) error {
 			wg.Add(1)
 
 			go func() {
-				insertChrome(fConfig, log.New(os.Stdout, "[insertChrome] ", log.Flags()))
-				wg.Done()
+				defer wg.Done()
+
+				logger := log.New(os.Stdout, "[insertChrome] ", log.Flags())
+
+				if err := insertChrome(fConfig, logger); err != nil {
+					logger.Println(err)
+				}
 			}()
 		}
 
@@ -139,8 +176,13 @@ func action(fConfig *ffcu.Config) func(ctx *cli.Context) error {
 			wg.Add(1)
 
 			go func() {
-				insertUserJs(fConfig, log.New(os.Stdout, "[insertUserJs] ", log.Flags()))
-				wg.Done()
+				defer wg.Done()
+
+				logger := log.New(os.Stdout, "[insertUserJs] ", log.Flags())
+
+				if err := insertUserJs(fConfig, logger); err != nil {
+					logger.Println(err)
+				}
 			}()
 		}
 
