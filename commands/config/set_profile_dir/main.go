@@ -24,11 +24,9 @@ func action(fConfig *ffcu.Config) func(ctx *cli.Context) error {
 
 		return nil
 	}
-
 }
 
 func Command(fConfig *ffcu.Config) *cli.Command {
-
 	return &cli.Command{
 		Name:   "set-profile-dir",
 		Usage:  "The dir where the user.js and chrome dir is",
