@@ -12,33 +12,33 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Tronikelis/ffcu/configuration"
+	"github.com/Tronikelis/ffcu/ffcu"
 	"github.com/Tronikelis/ffcu/utils"
 	"github.com/urfave/cli/v2"
 )
 
-func GetCommand(config *configuration.Config) *cli.Command {
+func GetCommand(fConfig *ffcu.Config) *cli.Command {
 	insertUserJs := func() {
-		log.Println("downloading", config.UserJsUrl)
+		log.Println("downloading", fConfig.UserJsUrl)
 
-		userJs, err := utils.DownloadBytes(config.UserJsUrl)
+		userJs, err := utils.DownloadBytes(fConfig.UserJsUrl)
 		if err != nil {
 			log.Println(err)
 			return
 		}
 
-		log.Println("writing user.js to", config.ProfileDir)
+		log.Println("writing user.js to", fConfig.ProfileDir)
 
 		if err := os.
-			WriteFile(path.Join(config.ProfileDir, "user.js"), userJs, os.ModePerm); err != nil {
+			WriteFile(path.Join(fConfig.ProfileDir, "user.js"), userJs, os.ModePerm); err != nil {
 			log.Println(err)
 		}
 	}
 
 	insertChrome := func() {
-		log.Println("downloading", config.ZippedChromeUrl)
+		log.Println("downloading", fConfig.ZippedChromeUrl)
 
-		zipped, err := utils.DownloadBytes(config.ZippedChromeUrl)
+		zipped, err := utils.DownloadBytes(fConfig.ZippedChromeUrl)
 		if err != nil {
 			log.Println(err)
 			return
@@ -50,7 +50,7 @@ func GetCommand(config *configuration.Config) *cli.Command {
 			return
 		}
 
-		chromeDir := path.Join(config.ProfileDir, "chrome")
+		chromeDir := path.Join(fConfig.ProfileDir, "chrome")
 
 		log.Println("removing", chromeDir)
 
@@ -110,7 +110,7 @@ func GetCommand(config *configuration.Config) *cli.Command {
 	}
 
 	action := func(ctx *cli.Context) error {
-		if !config.IsFilledOut() {
+		if !fConfig.IsFilledOut() {
 			return errors.New("config is not filled out")
 		}
 

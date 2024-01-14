@@ -6,7 +6,7 @@ import (
 	"path"
 
 	"github.com/Tronikelis/ffcu/commands"
-	"github.com/Tronikelis/ffcu/configuration"
+	"github.com/Tronikelis/ffcu/ffcu"
 
 	"github.com/urfave/cli/v2"
 )
@@ -23,11 +23,11 @@ func main() {
 
 	configDir := path.Join(homeDir, ".ffcu/config.json")
 
-	config, err := configuration.ReadConfig(configDir)
+	config, err := ffcu.ReadConfig(configDir)
 	if err != nil {
 		log.Println("can't read config, creating a new one")
 
-		config, err = configuration.CreateConfig(configDir)
+		config, err = ffcu.CreateConfig(configDir)
 		if err != nil {
 			log.Fatalln(err)
 		}

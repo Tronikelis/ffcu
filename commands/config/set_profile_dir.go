@@ -5,11 +5,11 @@ import (
 	"os"
 	"path"
 
-	"github.com/Tronikelis/ffcu/configuration"
+	"github.com/Tronikelis/ffcu/ffcu"
 	"github.com/urfave/cli/v2"
 )
 
-func setProfileDir(config *configuration.Config) *cli.Command {
+func setProfileDir(fConfig *ffcu.Config) *cli.Command {
 	action := func(ctx *cli.Context) error {
 		dir := ctx.Args().First()
 		if dir == "" {
@@ -20,7 +20,7 @@ func setProfileDir(config *configuration.Config) *cli.Command {
 			return errors.New("the directory you provided does not have a prefs.js")
 		}
 
-		config.ProfileDir = dir
+		fConfig.ProfileDir = dir
 
 		return nil
 	}

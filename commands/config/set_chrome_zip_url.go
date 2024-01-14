@@ -4,11 +4,11 @@ import (
 	"errors"
 	"net/url"
 
-	"github.com/Tronikelis/ffcu/configuration"
+	"github.com/Tronikelis/ffcu/ffcu"
 	"github.com/urfave/cli/v2"
 )
 
-func setChromeZipUrl(config *configuration.Config) *cli.Command {
+func setChromeZipUrl(fConfig *ffcu.Config) *cli.Command {
 	action := func(ctx *cli.Context) error {
 		u := ctx.Args().First()
 		if u == "" {
@@ -20,7 +20,7 @@ func setChromeZipUrl(config *configuration.Config) *cli.Command {
 			return err
 		}
 
-		config.ZippedChromeUrl = parsedUrl.String()
+		fConfig.ZippedChromeUrl = parsedUrl.String()
 
 		return nil
 	}

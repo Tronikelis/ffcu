@@ -1,17 +1,17 @@
 package config
 
 import (
-	"github.com/Tronikelis/ffcu/configuration"
+	"github.com/Tronikelis/ffcu/ffcu"
 	"github.com/urfave/cli/v2"
 )
 
-func GetCommand(config *configuration.Config) *cli.Command {
+func GetCommand(fConfig *ffcu.Config) *cli.Command {
 	return &cli.Command{
 		Name: "config",
 		Subcommands: []*cli.Command{
-			setProfileDir(config),
-			setUserJsUrl(config),
-			setChromeZipUrl(config),
+			setProfileDir(fConfig),
+			setUserJsUrl(fConfig),
+			setChromeZipUrl(fConfig),
 		},
 	}
 }
