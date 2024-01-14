@@ -42,3 +42,15 @@ The ffcu config is stored in `$HOME/.ffcu/config.json`
 
 Create a file in the root of your firefox profile directory named `user.overrides.js`, once the new `user.js` is written,
 that file will be appended at the end of the new `user.js`
+
+## Example config
+
+```
+$ ffcu config print
+
+{
+    "ProfileDir": "C:\\Users\\tronikel\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\1coaibnj.default-release",
+    "UserJsUrl": "https://raw.githubusercontent.com/yokoffing/Betterfox/main/user.js",
+    "ZippedChromeUrl": "https://codeload.github.com/bmFtZQ/edge-frfox/zip/refs/heads/main"
+}
+```
