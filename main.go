@@ -38,7 +38,7 @@ func main() {
 	app := &cli.App{
 		Name:     "ffcu",
 		Usage:    "Helper CLI tool to auto update your firefox config",
-		Commands: commands.GetCommands(&config),
+		Commands: commands.Commands(&config),
 	}
 
 	if err := app.Run(os.Args); err != nil {

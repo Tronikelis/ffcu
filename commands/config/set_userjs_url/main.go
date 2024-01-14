@@ -1,4 +1,4 @@
-package config
+package set_userjs_url
 
 import (
 	"errors"
@@ -8,8 +8,8 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func setUserJsUrl(fConfig *ffcu.Config) *cli.Command {
-	action := func(ctx *cli.Context) error {
+func action(fConfig *ffcu.Config) func(ctx *cli.Context) error {
+	return func(ctx *cli.Context) error {
 		u := ctx.Args().First()
 		if u == "" {
 			return errors.New("provide a url")
@@ -25,9 +25,12 @@ func setUserJsUrl(fConfig *ffcu.Config) *cli.Command {
 		return nil
 	}
 
+}
+
+func Command(fConfig *ffcu.Config) *cli.Command {
 	return &cli.Command{
-		Name:        "set-userjs-url",
-		Description: "Download the user.js from this url",
-		Action:      action,
+		Name:   "set-userjs-url",
+		Usage:  "Download the user.js from this url",
+		Action: action(fConfig),
 	}
 }

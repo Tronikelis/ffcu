@@ -1,4 +1,4 @@
-package config
+package set_chrome_zip_url
 
 import (
 	"errors"
@@ -8,8 +8,8 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func setChromeZipUrl(fConfig *ffcu.Config) *cli.Command {
-	action := func(ctx *cli.Context) error {
+func action(fConfig *ffcu.Config) func(ctx *cli.Context) error {
+	return func(ctx *cli.Context) error {
 		u := ctx.Args().First()
 		if u == "" {
 			return errors.New("provide a url")
@@ -25,9 +25,12 @@ func setChromeZipUrl(fConfig *ffcu.Config) *cli.Command {
 		return nil
 	}
 
+}
+
+func Command(fConfig *ffcu.Config) *cli.Command {
 	return &cli.Command{
-		Name:        "set-chrome-zip",
-		Description: "Download the zip which has the latest chrome dir from this url",
-		Action:      action,
+		Name:   "set-chrome-zip",
+		Usage:  "Download the zip which has the latest chrome dir from this url",
+		Action: action(fConfig),
 	}
 }

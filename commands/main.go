@@ -7,9 +7,9 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func GetCommands(fConfig *ffcu.Config) []*cli.Command {
+func Commands(fConfig *ffcu.Config) []*cli.Command {
 	return []*cli.Command{
-		config.GetCommand(fConfig),
-		update.GetCommand(fConfig),
+		config.Command(fConfig),
+		update.Command(fConfig),
 	}
 }
