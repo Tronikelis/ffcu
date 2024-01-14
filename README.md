@@ -18,6 +18,12 @@ GLOBAL OPTIONS:
    --help, -h  show help
 ```
 
+## Installing
+
+```
+go install github.com/Tronikelis/ffcu
+```
+
 ## Usage
 
 > [!WARNING]  
@@ -27,12 +33,6 @@ GLOBAL OPTIONS:
 2. `ffcu config set-userjs-url "the url that has the latest user.js file"`
 3. `ffcu config set-profile-dir "absolute path to the firefox profile directory"`
 4. `ffcu update`
-
-## Installing
-
-```
-go install github.com/Tronikelis/ffcu
-```
 
 ## Config
 
