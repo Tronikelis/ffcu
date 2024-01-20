@@ -18,6 +18,8 @@ GLOBAL OPTIONS:
    --help, -h  show help
 ```
 
+![ffcu](https://github.com/Tronikelis/ffcu/assets/56039679/8bbf9241-4776-4e96-b7ec-9c1571d8be21)
+
 ## Installing
 
 ```
