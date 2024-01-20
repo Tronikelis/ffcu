@@ -101,7 +101,7 @@ func insertUserJs(fConfig *ffcu.Config, log *log.Logger) error {
 	userJsOverrideDir := path.Join(fConfig.ProfileDir, USER_OVERRIDES_JS_NAME)
 
 	log.Println("removing", USER_JS_NAME)
-	if err := os.RemoveAll(userJsDir); err != nil {
+	if err := os.Remove(userJsDir); err != nil && !os.IsNotExist(err) {
 		return err
 	}
 
